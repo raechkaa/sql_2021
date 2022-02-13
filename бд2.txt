@@ -1,0 +1,76 @@
+# 1
+select month(dateId) as m, YEAR(dateId) as y, sum(salesRub)
+from distributor.singleSales
+group by month(dateId), year(dateId)
+order by m asc, y asc
+
+# 2
+select dateId, sum(salesRub)
+from distributor.singleSales
+where dateId like '%-01'
+group by dateId
+order by dateId asc;
+
+# 3
+select companyName, round(datediff(day, min(dateId), max(dateId))/nullif(sales-1, 0), 1) as 'Среднее время м/д покупками  в днях', 
+round(datediff(month, min(dateId), max(dateId))/nullif(sales-1, 0), 1) as 'Среднее время м/д покупками  в месяцах'
+from distributor.singleSales
+where companyName is not null
+group by companyName, sales;
+
+2 часть
+# 3
+select branchName as 'Филиал', DATEFROMPARTS(year(dateId), MONTH(dateId), 01) 'Дата начала месяца', Subcategory 'Тов. категория', 
+round(sum(salesRub),1) 'Выручка'
+from distributor.sales a
+    join distributor.item b on a.itemId = b.itemId
+    join distributor.branch c on a.branchId = c.branchId
+where Subcategory is not null
+group by branchName, year(dateId), month(dateId), Subcategory
+
+# 4
+select branchName as 'Филиал', datefromparts(year(dateId), MONTH(dateId), 01) 'Дата начала месяца', brand 'Бренд', 
+round(sum(salesRub),1) 'Выручка'
+from distributor.sales a
+    join distributor.item b on a.itemId = b.itemId
+    join distributor.branch c on a.branchId = c.branchId
+where brand is not null
+group by branchName, year(dateId), MONTH(dateId), brand
+order by 1, 2, 3
+
+# 6
+select top(3) brand 'Бренд',
+round(sum(salesRub),1) 'Выручка', (select round(sum(salesRub),1) from distributor.sales) as 'Полная выручка', 
+round(round(sum(salesRub),1)/(select round(sum(salesRub), 1) from distributor.sales), 5) as 'Вклад'
+from distributor.sales a
+join distributor.item b on a.itemId = b.itemId
+join distributor.branch c on a.branchId = c.branchId
+where brand is not null and dateId between '2013-01-01' and '2013-12-31'
+group by brand
+order by 2 desc;
+
+# 8
+select year(dateId), fullname, count(companyName)
+from distributor.sales a
+    join distributor.company b on a.companyId = b.companyId
+    join distributor.salesManager c on a.salesManagerId = c.salesManagerId
+group by fullname, year(dateId)
+order by year(dateId) asc
+
+# 12
+select itemName as 'Неликвидный товар', sum(sales) as 'Объем товара', 
+(select sum(sales) from distributor.sales) as 'Общий объем', sum(sales)/(select sum(sales) from distributor.sales) as 'Доля'
+from distributor.sales a
+join distributor.item b on a.itemId = b.itemId
+group by itemName, dateId
+having datediff(day, dateId, '2014-01-01') > 180
+
+# 27
+select itemName, sum(sales), (select sum(sales) from distributor.sales), 
+sum(sales)/(select sum(sales) from distributor.sales) as 'доля'
+from distributor.sales a
+join distributor.item b on a.itemId = b.itemId
+where category = 'Обои'
+group by itemName
+
+

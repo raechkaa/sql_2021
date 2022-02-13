@@ -1,0 +1,177 @@
+# 2 задание
+select [itemId],
+	[companyName],
+	[salesRub],
+	[sales],
+	[fullname]
+from [distributor].[singleSales];
+
+# 3 задание
+SELECT MIN(salesRub), 
+       MAX(salesRub), 
+       MIN(sales), 
+       MAX(sales)
+FROM distributor.singleSales;
+
+# 4 задание
+SELECT TOP(1) fullname, sum(sales)
+FROM distributor.singleSales
+WHERE branchName = 'Москва' AND dateId BETWEEN '2011-05-01' AND '2011-05-31' AND fullname IS NOT NULL
+GROUP BY fullname
+ORDER BY sum(sales) DESC;
+
+# 5 задание
+select count(distinct(checkId)) as 'Количество уникальных чеков'
+from distributor.singleSales;
+
+# 6 задание
+select count(distinct(checkId)) as 'Количество уникальных чеков'
+from distributor.singleSales
+where salesRub > 10000;
+
+# 7
+
+
+# 8
+select top (1000) * 
+from distributor.singleSales
+order by sales desc;
+
+# 9
+select top (1000) * 
+from distributor.singleSales
+where sales not like '-%'
+order by sales desc;
+
+# 10
+select top (1000) * 
+from distributor.singleSales
+where fullname is not null
+order by fullname asc;
+
+# 11
+select top (1000) * 
+from distributor.singleSales
+where fullname is not null
+order by fullname asc, sales desc;
+
+# 12
+select *
+from distributor.singleSales
+where salesRub in (select max(salesRub)
+                   from distributor.singleSales
+                   where fullname is not null
+		   );
+
+# 13
+select checkId
+from distributor.singleSales
+where salesRub in (select max(salesRub)
+                   from distributor.singleSales
+                   where fullname is not null
+		   );
+
+# 14
+select top (100) checkId as 'Номер чека', 
+       itemId 'Номер товара', 
+       branchName as 'Филиал', 
+       region as 'Регион', 
+       sizeBranch as 'Размер филиала', 
+       fullname as 'Менеджер',
+       companyName as 'Компания',
+       itemName as 'Товар',
+       brand as 'Бренд',
+       category as 'Категория товара',
+       dateId as 'Дата продажи',
+       sales as 'Количество продаж',
+       salesRub as 'Цена продажи'
+from distributor.singleSales
+
+# 15 
+select count(distinct(fullname)) as 'Количество уникальных менеждеров'
+from distributor.singleSales
+where fullname is not null;
+
+# 16
+select count(distinct(companyName)) as 'Количество уникальных клиентов'
+from distributor.singleSales
+where companyName is not null;
+
+# 17
+select fullname as 'Менеджер', count(companyName) as 'Количество клиентов'
+from distributor.singleSales
+where fullname is not null and companyName is not NULL
+group by fullname; ?? 
+
+# 18
+select fullname as Менеджер, avg(sales)
+from distributor.singleSales
+where fullname is not null and branchName = 'Москва'
+group by fullname; 
+
+Сколько в среднем клиентов обслуживает менеджер филиала в Москве
+
+# 19
+select fullname as Менеджер, sum(sales)
+from distributor.singleSales
+where fullname is not null and branchName = 'Москва' and dateId between '2011-01-01' and '2011-12-31'
+group by fullname;
+
+Сколько всего клиентов обслужил менеджер в Москве в период с 01.01.2011 по 31.12.2011
+
+# 20
+select top(1) fullname as 'Менеджер', count(companyName) as 'Количество обслуженных клиентов'
+from distributor.singleSales
+where fullname is not null and companyName is not null and branchName = 'Москва'
+group by fullname
+order by 2 desc;
+
+Филиал = Москва
+
+# 21
+select top(1) fullname as Менеджер, round(sum(salesRub), 2) as 'Выручка'
+from distributor.singleSales
+where fullname is not null and branchName = 'Москва' and dateId between '2011-01-01' and '2011-01-31'
+group by fullname
+order by 2 desc; 
+
+ Филиал = Москва, период с 01.01.2011 по 31.01.2011
+
+# 22
+select fullname as 'Менеджер', round(avg(salesRub), 1) as 'Средний чек'
+from distributor.singleSales
+group by fullname;
+
+# 23
+select branchName as 'Филиал', round(avg(salesRub), 1) as 'Средний чек'
+from distributor.singleSales
+group by branchName;
+
+# 24
+ select branchName as 'Филиал', fullname as 'Менеджер', round(avg(salesRub), 1) as 'Средний чек'
+from distributor.singleSales
+where fullname is not null
+group by branchName, fullname
+order by branchName asc, fullname asc;
+
+# 25
+select companyName 
+from distributor.company
+where companyName like 'ООО "ДЕКОРУМ%';
+
+# 26
+select a.companyName as 'Компания', round(avg(b.salesRub), 1) as 'Средний чек'
+from distributor.company a 
+    inner join distributor.singleSales b on a.companyName = b.companyName
+where a.companyName like 'ООО "ДЕКОРУМ%'
+group by a.companyName;
+
+# 27
+Задача с *
+
+# 28
+# 29
+
+# 30
+
+
